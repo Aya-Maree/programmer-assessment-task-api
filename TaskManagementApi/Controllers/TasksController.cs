@@ -16,11 +16,33 @@ public class TasksController : ControllerBase
         _context = context;
     }
 
-    [HttpGet] //makes GET /api/tasks return every task in the database
-    public async Task<ActionResult<IEnumerable<TaskItem>>> GetTasks()
+    [HttpGet]
+public async Task<ActionResult<IEnumerable<TaskItem>>> GetTasks(
+    string? search,
+    string? status,
+    string? priority)
+{
+    var query = _context.Tasks.AsQueryable();
+
+    if (!string.IsNullOrWhiteSpace(search))
     {
-        return await _context.Tasks.ToListAsync();
+        query = query.Where(task =>
+            task.Title.Contains(search) ||
+            (task.Description != null && task.Description.Contains(search)));
     }
+
+    if (!string.IsNullOrWhiteSpace(status))
+    {
+        query = query.Where(task => task.Status == status);
+    }
+
+    if (!string.IsNullOrWhiteSpace(priority))
+    {
+        query = query.Where(task => task.Priority == priority);
+    }
+
+    return await query.ToListAsync();
+}
 
     [HttpGet("{id}")] //makes GET /api/tasks/{id} return a specific task by its ID
     public async Task<ActionResult<TaskItem>> GetTask(int id)
