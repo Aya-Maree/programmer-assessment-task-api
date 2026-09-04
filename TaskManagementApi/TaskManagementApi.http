@@ -1,6 +1,18 @@
 @TaskManagementApi_HostAddress = http://localhost:5276
 
-GET {{TaskManagementApi_HostAddress}}/weatherforecast/
+GET {{TaskManagementApi_HostAddress}}/api/tasks
 Accept: application/json
 
 ###
+
+POST {{TaskManagementApi_HostAddress}}/api/tasks
+Content-Type: application/json
+
+{
+  "title": "Update student portal",
+  "description": "Fix the task filtering issue",
+  "status": "In Progress",
+  "priority": "High",
+  "assignedTo": "Aya",
+  "dueDate": "2026-09-10T17:00:00"
+}
