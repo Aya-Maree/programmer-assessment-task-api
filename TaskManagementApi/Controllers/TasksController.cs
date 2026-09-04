@@ -115,4 +115,20 @@ public async Task<IActionResult> DeleteTask(int id)
     return NoContent();
 }
 
+[HttpGet("overdue")]
+public async Task<ActionResult<IEnumerable<TaskItem>>> GetOverdueTasks()
+{
+    var today = DateTime.UtcNow;
+
+    var overdueTasks = await _context.Tasks
+        .Where(task =>
+            task.DueDate != null &&
+            task.DueDate < today &&
+            task.Status != "Completed")
+        .ToListAsync();
+
+    return overdueTasks;
+}
+
+
 }
