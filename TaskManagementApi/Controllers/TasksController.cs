@@ -10,7 +10,19 @@ namespace TaskManagementApi.Controllers;
 public class TasksController : ControllerBase
 {
     private readonly TaskDbContext _context; //db connection through EF Core
+    private static readonly string[] ValidStatuses =
+{
+    "Not Started",
+    "In Progress",
+    "Completed"
+};
 
+private static readonly string[] ValidPriorities =
+{
+    "Low",
+    "Medium",
+    "High"
+};
     public TasksController(TaskDbContext context)
     {
         _context = context;
@@ -57,9 +69,29 @@ public async Task<ActionResult<IEnumerable<TaskItem>>> GetTasks(
         return task;
     }
 
-    [HttpPost]
+   [HttpPost]
 public async Task<ActionResult<TaskItem>> CreateTask(TaskItem task)
 {
+    if (string.IsNullOrWhiteSpace(task.Title))
+    {
+        return BadRequest("Title is required.");
+    }
+
+    if (!ValidStatuses.Contains(task.Status))
+    {
+        return BadRequest("Status must be Not Started, In Progress, or Completed.");
+    }
+
+    if (!ValidPriorities.Contains(task.Priority))
+    {
+        return BadRequest("Priority must be Low, Medium, or High.");
+    }
+
+    if (task.DueDate != null && task.DueDate < DateTime.UtcNow.Date)
+    {
+        return BadRequest("Due date cannot be in the past.");
+    }
+
     task.CreatedDate = DateTime.UtcNow;
 
     _context.Tasks.Add(task);
@@ -79,6 +111,25 @@ public async Task<IActionResult> UpdateTask(int id, TaskItem task)
     {
         return BadRequest();
     }
+    if (string.IsNullOrWhiteSpace(task.Title))
+{
+    return BadRequest("Title is required.");
+}
+
+if (!ValidStatuses.Contains(task.Status))
+{
+    return BadRequest("Status must be Not Started, In Progress, or Completed.");
+}
+
+if (!ValidPriorities.Contains(task.Priority))
+{
+    return BadRequest("Priority must be Low, Medium, or High.");
+}
+
+if (task.DueDate != null && task.DueDate < DateTime.UtcNow.Date)
+{
+    return BadRequest("Due date cannot be in the past.");
+}
 
     var existingTask = await _context.Tasks.FindAsync(id);
 
