@@ -11,6 +11,14 @@ builder.Services.AddDbContext<TaskDbContext>(options =>
 builder.Services.AddControllers();
 
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<TaskDbContext>();
+
+    context.Database.Migrate();
+    DataSeeder.Seed(context);
+}
+
 app.MapControllers();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
