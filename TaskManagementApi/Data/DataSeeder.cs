@@ -6,14 +6,16 @@ public static class DataSeeder
 {
     public static void Seed(TaskDbContext context)
     {
+        // only add the sample tasks if the database is empty
         if (context.Tasks.Any())
         {
             return;
         }
 
-        var tasks = new[]
+        // some starting tasks so there is data to work with when the app first runs
+        var sampleTasks = new[]
         {
-            new TaskItem
+            new TaskEntry
             {
                 Title = "Review project requirements",
                 Description = "Review the task management API requirements.",
@@ -23,7 +25,7 @@ public static class DataSeeder
                 CreatedDate = DateTime.UtcNow,
                 DueDate = DateTime.UtcNow.AddDays(-1)
             },
-            new TaskItem
+            new TaskEntry
             {
                 Title = "Test API endpoints",
                 Description = "Test CRUD, search, filtering, and validation.",
@@ -33,7 +35,7 @@ public static class DataSeeder
                 CreatedDate = DateTime.UtcNow,
                 DueDate = DateTime.UtcNow.AddDays(2)
             },
-            new TaskItem
+            new TaskEntry
             {
                 Title = "Complete README",
                 Description = "Add setup and run instructions.",
@@ -45,7 +47,8 @@ public static class DataSeeder
             }
         };
 
-        context.Tasks.AddRange(tasks);
+        // add the sample tasks to the database
+        context.Tasks.AddRange(sampleTasks);
         context.SaveChanges();
     }
 }
