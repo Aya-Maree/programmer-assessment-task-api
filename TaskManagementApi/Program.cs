@@ -21,6 +21,10 @@ using (var scope = app.Services.CreateScope())
     DataSeeder.Seed(context);
 }
 
+// serve the simple frontend
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 // map the api controllers
 app.MapControllers();
 
